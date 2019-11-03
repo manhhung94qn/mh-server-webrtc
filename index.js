@@ -1,4 +1,4 @@
-const io = require('socket.io')(process.env.port || 3000);
+const io = require('socket.io')(process.env.PORT || 3000);
 
 let arrayUser = [];
 
