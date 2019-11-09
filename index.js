@@ -1,4 +1,20 @@
-const io = require('socket.io')(process.env.PORT || 3000);
+// const io = require('socket.io')(process.env.port || 3000);
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
+app.set('views' , './views');
+app.set('view engine', 'ejs');
+app.use('/static', express.static('public'));
+
+server.listen(process.env.PORT || 3000);
+
+app.get('/', function (req, res) {
+    res.render('index');
+});
+
+
 
 let arrayUser = [];
 
@@ -15,6 +31,15 @@ io.on('connection', socket=>{
         socket.emit('DANH_SACH_ONLINE', arrayUser);
         // io.emit('CO_NGUOI_DUNG_MOI', arrayUser);
         socket.broadcast.emit('CO_NGUOI_DUNG_MOI', arrayUser);
+    });
+
+    socket.on('NGUOI_DUNG_NHAN_TIN' , messengeInfor=>{
+        let messengeResult = {
+            peerId : socket.peerId,
+            messenge : messengeInfor.messenge,
+            userName: messengeInfor.userName
+        };
+        io.emit('CO_NGUOI_NHAN_TIN', messengeResult);
     });
 
     socket.on('disconnect',()=>{
